@@ -101,6 +101,14 @@ func (l *BoltStore) Get(ref hash.Hash) Chunk {
 	return l.getByKey(l.toChunkKey(ref), ref)
 }
 
+func (l *BoltStore) GetMany(hashes []hash.Hash) (batch []Chunk) {
+	batch = make([]Chunk, len(hashes))
+	for i, h := range hashes {
+		batch[i] = l.Get(h)
+	}
+	return
+}
+
 func (l *BoltStore) Has(ref hash.Hash) bool {
 	d.PanicIfFalse(l.internalBoltStore != nil)
 	return l.hasByKey(l.toChunkKey(ref))
@@ -130,6 +138,8 @@ func (l *BoltStore) PutMany(chunks []Chunk) (e BackpressureError) {
 	//l.putBatch(b, numBytes)
 	return
 }
+
+func (l *BoltStore) Flush() {}
 
 func (l *BoltStore) Close() error {
 	if l.closeBackingStore {
