@@ -164,6 +164,8 @@ func (sp Spec) NewChunkStore() chunks.ChunkStore {
 		fmt.Println("spec NewChunkStore = ", sp.Spec)
 		mysp, _ := ForDataset(sp.Spec)
 		return getBoltStore(sp.DatabaseName, mysp.DatasetName)
+	case "redis":
+		return getRedisStore(sp.DatabaseName)
 	case "mem":
 		return chunks.NewMemoryStore()
 	}
@@ -257,6 +259,8 @@ func (sp Spec) createDatabase() datas.Database {
 		fmt.Println("spec createDatabase = ", sp.Spec)
 		mysp, _ := ForDataset(sp.Spec)
 		return datas.NewDatabase(getBoltStore(sp.DatabaseName, mysp.DatasetName))
+	case "redis":
+		return datas.NewDatabase(getRedisStore(sp.DatabaseName))
 	case "nbs":
 		return datas.NewDatabase(nbs.NewLocalStore(sp.DatabaseName, 1<<28))
 	case "mem":
@@ -286,7 +290,7 @@ func parseDatabaseSpec(spec string) (protocol, name string, err error) {
 	}
 
 	switch parts[0] {
-	case "ldb", "nbs", "bolt":
+	case "ldb", "nbs", "bolt", "redis":
 		protocol, name = parts[0], parts[1]
 
 	case "http", "https":
