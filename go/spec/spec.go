@@ -160,6 +160,10 @@ func (sp Spec) NewChunkStore() chunks.ChunkStore {
 		return nbs.NewLocalStore(sp.DatabaseName, 1<<28)
 	case "ldb":
 		return getLdbStore(sp.DatabaseName)
+	case "bolt":
+		fmt.Println("spec NewChunkStore = ", sp.Spec)
+		mysp, _ := ForDataset(sp.Spec)
+		return getBoltStore(sp.DatabaseName, mysp.DatasetName)
 	case "mem":
 		return chunks.NewMemoryStore()
 	}
@@ -249,6 +253,10 @@ func (sp Spec) createDatabase() datas.Database {
 		return datas.NewRemoteDatabase(sp.Href(), sp.Options.Authorization)
 	case "ldb":
 		return datas.NewDatabase(getLdbStore(sp.DatabaseName))
+	case "bolt":
+		fmt.Println("spec createDatabase = ", sp.Spec)
+		mysp, _ := ForDataset(sp.Spec)
+		return datas.NewDatabase(getBoltStore(sp.DatabaseName, mysp.DatasetName))
 	case "nbs":
 		return datas.NewDatabase(nbs.NewLocalStore(sp.DatabaseName, 1<<28))
 	case "mem":
@@ -278,7 +286,7 @@ func parseDatabaseSpec(spec string) (protocol, name string, err error) {
 	}
 
 	switch parts[0] {
-	case "ldb", "nbs":
+	case "ldb", "nbs", "bolt":
 		protocol, name = parts[0], parts[1]
 
 	case "http", "https":
