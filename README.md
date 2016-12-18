@@ -14,13 +14,24 @@ https://github.com/attic-labs/noms/commit/9998ec030175f8650f83dd8d0715b42c83fda4
 File changes to this point have been completed...
 
 ```
-go/chunks/bolt_*.go
+go/chunks/bolt_store.go
 go/chunks/redis_store.go
-go/chunks/chunks_store_redis_test.go
 
 go/spec/spec_store.go
-go/spec/spec_bolt_test.go
 go/spec/spec.go
 go/spec/ref_counting_bolt_store.go
 go/spec/ref_counting_redis_store.go
+```
+
+I have not pulled in any of the tests yet.
+
+Theoretically the only file changes really needed if I got rid of the
+ref_counting files and integrated that code into the respective stores
+and put the spec_store code in spec would be 3 file changes namely...
+
+```
+go/chunks/bolt_store.go
+go/chunks/redis_store.go
+
+go/spec/spec.go
 ```
